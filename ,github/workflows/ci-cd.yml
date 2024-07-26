@@ -15,6 +15,8 @@ jobs:
       run: pip install -r requirements.txt
     - name: Set PYTHONPATH
       run: echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
+    - name: Run tests
+      run: pytest
     - name: Build Docker image
       run: docker build -t your-docker-image .
     - name: Push to Docker Hub
