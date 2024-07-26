@@ -1,21 +1,20 @@
 import sys
 import os
-import pytest
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from app import app, db
+import pytest
 
 @pytest.fixture(scope='module')
 def client():
     app.config['TESTING'] = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+    client = app.test_client()
 
-    with app.test_client() as client:
-        with app.app_context():
-            db.create_all()
-        yield client
-        with app.app_context():
-            db.drop_all()
+    with app.app_context():
+        db.create_all()
+    
+    yield client
 
-@pytest.fixture(scope='module')
-def token(client):
-    response = client.post('/auth/token', json={'user_id': 'test_user'})
-    return response.get_json()['token']
+    with app.app_context():
+        db.drop_all()
